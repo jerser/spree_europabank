@@ -9,21 +9,6 @@ module Spree
 
       ActiveMerchant::Billing::Base.integration_mode = @payment_method.
                                                           preferred(:server).to_sym
-
-      @europabank = ActiveMerchant::Billing::Integrations::Europabank::Helper.new(
-                      @order.number, @payment_method.preferred(:uid),
-                      account_name: @payment_method.preferred(:beneficiary),
-                      authcode: @payment_method.preferred(:client_secret))
-      @europabank.amount = (@order.total * 100).to_i
-      @europabank.return_url = europabank_return_order_checkout_url
-      @europabank.customer name: "#{@order.bill_address.firstname} "\
-                                 "#{@order.bill_address.lastname}",
-                           language: I18n.locale
-      @europabank.billing_address country: @order.bill_address.country.name
-      @europabank.css = @payment_method.preferred(:css_url)
-      @europabank.template = @payment_method.preferred(:template_url)
-      @europabank_service_url = ActiveMerchant::Billing::Integrations::
-                                  Europabank.service_url
     end
 
     def europabank_return

@@ -1,6 +1,24 @@
-<form method="post" action="<%= @europabank_service_url %>" class="europabank">
-<% @europabank.form_fields.each do |field, value| %>
-<input type="hidden" name="<%= field %>" value="<%= value %>">
+<% payment_service_for @order.number,
+                       @payment_method.preferred(:uid),
+
+                       account_name: @payment_method.preferred(:beneficiary),
+                       authcode: @payment_method.preferred(:client_secret),
+
+                       html: {enforce_utf8: false, authenticity_token: false},
+
+                       service: :europabank do |service|
+%>
+
+<% service.amount (@order.total * 100).to_i %>
+<% service.return_url europabank_return_order_checkout_url %>
+<% service.customer name: "#{@order.bill_address.firstname} "\
+                          "#{@order.bill_address.lastname}",
+                    language: I18n.locale %>
+<% service.billing_address country: @order.bill_address.country.name %>
+
+<% service.css = @payment_method.preferred(:css_url) %>
+<% service.template = @payment_method.preferred(:template_url) %>
+
+<%= submit_tag Spree.t('pay_with_europabank'), name: 'submit' %>
+
 <% end %>
-<input type="submit" name="submit" value="<%= Spree.t('pay_with_europabank') %>">
-</form>
