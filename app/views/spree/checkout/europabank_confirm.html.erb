@@ -1,0 +1,6 @@
+<form method="post" action="<%= @europabank_service_url %>" class="europabank">
+<% @europabank.form_fields.each do |field, value| %>
+<input type="hidden" name="<%= field %>" value="<%= value %>">
+<% end %>
+<input type="submit" name="submit" value="<%= Spree.t('pay_with_europabank') %>">
+</form>
